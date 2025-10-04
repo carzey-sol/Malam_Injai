@@ -24,8 +24,8 @@ interface ContactInfoProps {
 export default function ContactInfo({ getInTouch, socialLinks, className = '' }: ContactInfoProps) {
   return (
     <div className={`contact-info ${className}`}>
-      <h2>Get in Touch</h2>
-      <p>{getInTouch.description || 'Have questions, suggestions, or want to collaborate? We\'d love to hear from you. Reach out to us through any of the channels below.'}</p>
+      <h2 className="contact-title">Get in Touch</h2>
+      <p className="contact-subtitle">{getInTouch.description || 'Have questions, suggestions, or want to collaborate? We\'d love to hear from you. Reach out to us through any of the channels below.'}</p>
       
       <div className="contact-methods">
         {getInTouch.email && (

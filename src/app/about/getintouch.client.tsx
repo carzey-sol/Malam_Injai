@@ -20,24 +20,49 @@ export default function GetInTouchClient() {
   if (!data) return null;
 
   return (
-    <div style={{ background: 'white', padding: '2rem', borderRadius: '10px', boxShadow: 'var(--shadow)' }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '1rem' }}>{data.headline || 'Get in Touch'}</h2>
-      {data.description && <p style={{ textAlign: 'center', color: 'var(--dark-gray)', marginBottom: '1.5rem' }}>{data.description}</p>}
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', flexWrap: 'wrap' }}>
+    <div className="contact-info">
+      <h2 className="contact-title">{data.headline || 'Get in Touch'}</h2>
+      {data.description && <p className="contact-subtitle">{data.description}</p>}
+      
+      <div className="contact-methods">
         {data.email && (
-          <div><i className="fas fa-envelope" style={{ marginRight: 6 }}></i>{data.email}</div>
+          <div className="contact-method">
+            <div className="contact-icon">
+              <i className="fas fa-envelope"></i>
+            </div>
+            <div className="contact-details">
+              <h3>Email</h3>
+              <p>{data.email}</p>
+            </div>
+          </div>
         )}
+        
         {data.phone && (
-          <div><i className="fas fa-phone" style={{ marginRight: 6 }}></i>{data.phone}</div>
+          <div className="contact-method">
+            <div className="contact-icon">
+              <i className="fas fa-phone"></i>
+            </div>
+            <div className="contact-details">
+              <h3>Phone</h3>
+              <p>{data.phone}</p>
+            </div>
+          </div>
+        )}
+        
+        {Array.isArray(data.addressLines) && data.addressLines.length > 0 && (
+          <div className="contact-method">
+            <div className="contact-icon">
+              <i className="fas fa-map-marker-alt"></i>
+            </div>
+            <div className="contact-details">
+              <h3>Address</h3>
+              {data.addressLines.map((line, idx) => (
+                <p key={idx}>{line}</p>
+              ))}
+            </div>
+          </div>
         )}
       </div>
-      {Array.isArray(data.addressLines) && data.addressLines.length > 0 && (
-        <div style={{ textAlign: 'center', marginTop: '1rem', color: 'var(--dark-gray)' }}>
-          {data.addressLines.map((line, idx) => (
-            <div key={idx}>{line}</div>
-          ))}
-        </div>
-      )}
     </div>
   );
 }
