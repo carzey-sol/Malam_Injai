@@ -165,6 +165,11 @@ h1, h2, h3, h4, h5, h6 {
     width: 100%;
 }
 
+/* Remove underline from logo */
+.nav-logo a {
+    text-decoration: none;
+}
+
 
 .hamburger {
     display: none;
@@ -386,6 +391,30 @@ h1, h2, h3, h4, h5, h6 {
 .upcoming-events {
     padding: 5rem 0;
     background: var(--light-gray);
+}
+
+/* Home Page Events Grid */
+.events-grid-home {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.event-card-home {
+    background: var(--accent-color);
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    transition: transform 0.3s ease;
+}
+
+.event-card-home:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
 }
 
 .events-grid {
@@ -2233,18 +2262,7 @@ h1, h2, h3, h4, h5, h6 {
     gap: 1rem;
 }
 
-.search-input {
-    padding: 12px 16px;
-    border: 2px solid var(--border-color);
-    border-radius: 8px;
-    font-size: 16px;
-    background: white;
-}
-
-.search-input:focus {
-    outline: none;
-    border-color: var(--primary-color);
-}
+/* Removed duplicate search-input styles - using the enhanced version above */
 
 .filter-buttons {
     display: flex;

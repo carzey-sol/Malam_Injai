@@ -82,11 +82,11 @@ export default function UpcomingEvents() {
     <section className="upcoming-events">
       <div className="container">
         <h2 className="section-title">Upcoming Events</h2>
-        <div className="events-grid">
+        <div className="events-grid-home">
           {events.map((event) => {
             const { day, month } = formatDate(event.date);
             return (
-              <div key={event._id} className="event-card">
+              <div key={event._id} className="event-card-home">
                 <div className="event-date">
                   <span className="day">{day}</span>
                   <span className="month">{month}</span>
