@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import PageHero from '@/components/PageHero';
 import ContactInfo from '@/components/ContactInfo';
-import ContactForm from '@/components/ContactForm';
 
 interface SocialLink {
   platform: string;
@@ -21,8 +20,6 @@ interface GetInTouch {
 }
 
 export default function ContactPage() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
   const [getInTouch, setGetInTouch] = useState<GetInTouch>({});
   const [loading, setLoading] = useState(true);
@@ -45,31 +42,6 @@ export default function ContactPage() {
     loadSettings();
   }, []);
 
-  const handleFormSubmit = async (formData: any) => {
-    setIsSubmitting(true);
-    setSubmitStatus('idle');
-
-    try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        setSubmitStatus('success');
-      } else {
-        setSubmitStatus('error');
-      }
-    } catch (error) {
-      console.error('Error submitting contact form:', error);
-      setSubmitStatus('error');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   if (loading) {
     return (
@@ -95,11 +67,6 @@ export default function ContactPage() {
             <ContactInfo 
               getInTouch={getInTouch}
               socialLinks={socialLinks}
-            />
-            <ContactForm
-              onSubmit={handleFormSubmit}
-              isSubmitting={isSubmitting}
-              submitStatus={submitStatus}
             />
           </div>
         </div>
