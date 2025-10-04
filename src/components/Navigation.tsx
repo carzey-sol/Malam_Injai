@@ -26,6 +26,7 @@ export default function Navigation() {
     { href: '/videos', label: 'Videos' },
     { href: '/events', label: 'Events' },
     { href: '/contact', label: 'Contact' },
+    { href: '/about', label: 'About' },
   ];
 
   return (
