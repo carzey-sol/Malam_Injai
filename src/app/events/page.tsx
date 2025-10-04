@@ -28,6 +28,8 @@ export default function EventsPage() {
   const [error, setError] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     fetchEvents();
@@ -36,6 +38,24 @@ export default function EventsPage() {
   useEffect(() => {
     filterEvents();
   }, [events, activeFilter, searchTerm]);
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isModalOpen) {
+        closeModal();
+      }
+    };
+
+    if (isModalOpen) {
+      document.addEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isModalOpen]);
 
   const fetchEvents = async () => {
     try {
@@ -80,6 +100,22 @@ export default function EventsPage() {
       month: 'long',
       day: 'numeric'
     });
+  };
+
+  const openModal = (event: Event) => {
+    setSelectedEvent(event);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setSelectedEvent(null);
+    setIsModalOpen(false);
+  };
+
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      closeModal();
+    }
   };
 
   if (loading) {
@@ -171,11 +207,21 @@ export default function EventsPage() {
                         <span className="ticket-price">${event.ticketPrice}</span>
                       )}
                     </div>
-                    {event.ticketUrl && (
-                      <Link href={event.ticketUrl} className="btn btn-primary" target="_blank">
-                        Get Tickets
-                      </Link>
-                    )}
+                    <div className="event-actions">
+                      <button 
+                        className="learn-more-btn"
+                        onClick={() => openModal(event)}
+                      >
+                        <i className="fas fa-info-circle"></i>
+                        Learn More
+                      </button>
+                      {event.ticketUrl && (
+                        <Link href={event.ticketUrl} className="btn btn-primary" target="_blank">
+                          <i className="fas fa-ticket-alt"></i>
+                          Get Tickets
+                        </Link>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))
@@ -231,6 +277,110 @@ export default function EventsPage() {
           </div>
         </div>
       </section>
+
+      {/* Event Modal */}
+      {isModalOpen && selectedEvent && (
+        <div className="event-modal-overlay" onClick={handleOverlayClick}>
+          <div className="event-modal">
+            <div className="event-modal-header">
+              <img 
+                src={selectedEvent.image} 
+                alt={selectedEvent.title}
+                className="event-modal-image"
+              />
+              {selectedEvent.featured && (
+                <span className="featured-badge">Featured</span>
+              )}
+              <button 
+                className="event-modal-close"
+                onClick={closeModal}
+                aria-label="Close modal"
+              >
+                <i className="fas fa-times"></i>
+              </button>
+            </div>
+            
+            <div className="event-modal-content">
+              <h2 className="event-modal-title">{selectedEvent.title}</h2>
+              <p className="event-modal-description">{selectedEvent.description}</p>
+              
+              <div className="event-modal-details">
+                <div className="event-modal-detail">
+                  <i className="fas fa-calendar"></i>
+                  <div className="event-modal-detail-content">
+                    <h4>Date & Time</h4>
+                    <p>{formatDate(selectedEvent.date)}</p>
+                  </div>
+                </div>
+                
+                <div className="event-modal-detail">
+                  <i className="fas fa-map-marker-alt"></i>
+                  <div className="event-modal-detail-content">
+                    <h4>Location</h4>
+                    <p>{selectedEvent.location}</p>
+                  </div>
+                </div>
+                
+                <div className="event-modal-detail">
+                  <i className="fas fa-tag"></i>
+                  <div className="event-modal-detail-content">
+                    <h4>Event Type</h4>
+                    <p>{selectedEvent.type}</p>
+                  </div>
+                </div>
+                
+                <div className="event-modal-detail">
+                  <i className="fas fa-info-circle"></i>
+                  <div className="event-modal-detail-content">
+                    <h4>Status</h4>
+                    <p className={`status ${selectedEvent.status}`}>{selectedEvent.status}</p>
+                  </div>
+                </div>
+                
+                {selectedEvent.ticketPrice && (
+                  <div className="event-modal-detail">
+                    <i className="fas fa-dollar-sign"></i>
+                    <div className="event-modal-detail-content">
+                      <h4>Ticket Price</h4>
+                      <p>${selectedEvent.ticketPrice}</p>
+                    </div>
+                  </div>
+                )}
+                
+                {selectedEvent.capacity && (
+                  <div className="event-modal-detail">
+                    <i className="fas fa-users"></i>
+                    <div className="event-modal-detail-content">
+                      <h4>Capacity</h4>
+                      <p>{selectedEvent.capacity} people</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              <div className="event-modal-actions">
+                {selectedEvent.ticketUrl && (
+                  <Link 
+                    href={selectedEvent.ticketUrl} 
+                    className="btn btn-primary" 
+                    target="_blank"
+                  >
+                    <i className="fas fa-ticket-alt"></i>
+                    Get Tickets
+                  </Link>
+                )}
+                <button 
+                  className="btn btn-outline"
+                  onClick={closeModal}
+                >
+                  <i className="fas fa-times"></i>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 } 
