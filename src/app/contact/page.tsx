@@ -54,17 +54,14 @@ export default function ContactPage() {
 
   return (
     <>
-      <PageHero
-        title="Contact Us"
-        subtitle={getInTouch.headline || 'Get in Touch with Injai Channel'}
-      />
+      
 
       
 
       <section className="contact-cta">
         <div className="container">
           <div className="cta-content">
-            <h3 className="cta-title">
+            <h3 className="cta-title p-5">
               Ready to Connect?
             </h3>
             <p className="cta-description">
