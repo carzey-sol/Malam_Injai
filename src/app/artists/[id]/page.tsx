@@ -1,143 +1,188 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { prisma } from '@/lib/prisma';
+import StructuredData from '@/components/StructuredData';
+import { generateMetadata as generateSEOMetadata } from '@/lib/seo';
 
 interface Artist {
-  _id: string;
+  id: string;
   name: string;
   bio: string;
   category: string;
   image: string;
-  stats: {
-    yearsActive: number;
-    tracksReleased: number;
-    streams: number;
+  thumbnail: string;
+  yearsActive: number;
+  tracksReleased: number;
+  streams: number;
+  youtube?: string | null;
+  instagram?: string | null;
+  twitter?: string | null;
+  tiktok?: string | null;
+  featured: boolean;
+}
+
+interface ArtistDetailPageProps {
+  params: {
+    id: string;
   };
 }
 
-export default function ArtistDetailPage() {
-  const params = useParams();
-  const router = useRouter();
-  const [artist, setArtist] = useState<Artist | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [showFullBio, setShowFullBio] = useState(false);
+export async function generateMetadata({ params }: ArtistDetailPageProps): Promise<Metadata> {
+  try {
+    const artist = await prisma.artist.findUnique({
+      where: { id: params.id }
+    });
 
-  useEffect(() => {
-    if (params.id) {
-      fetchArtist(params.id as string);
+    if (!artist) {
+      return generateSEOMetadata({
+        title: 'Artist Not Found',
+        description: 'The requested artist could not be found.',
+        noindex: true,
+      });
     }
-  }, [params.id]);
 
-  const fetchArtist = async (id: string) => {
-    try {
-      const response = await fetch(`/api/artists/${id}`);
-      if (!response.ok) {
-        throw new Error('Artist not found');
-      }
-      const data = await response.json();
-      setArtist(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch artist');
-    } finally {
-      setLoading(false);
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://injai-channel.com';
+    const artistUrl = `${siteUrl}/artists/${artist.id}`;
+
+    return generateSEOMetadata({
+      title: `${artist.name} - Guigui Rap Artist`,
+      description: artist.bio,
+      keywords: ['Guigui rap', 'rap artist', artist.name, 'music', 'hip-hop', 'African rap'],
+      image: artist.image,
+      url: artistUrl,
+      type: 'profile',
+      author: artist.name,
+      canonical: artistUrl,
+    });
+  } catch (error) {
+    console.error('Error generating metadata:', error);
+    return generateSEOMetadata({
+      title: 'Artist Not Found',
+      description: 'The requested artist could not be found.',
+      noindex: true,
+    });
+  }
+}
+
+export default async function ArtistDetailPage({ params }: ArtistDetailPageProps) {
+  let artist: Artist | null = null;
+
+  try {
+    artist = await prisma.artist.findUnique({
+      where: { id: params.id }
+    });
+
+    if (!artist) {
+      notFound();
     }
-  };
+  } catch (error) {
+    console.error('Error fetching artist:', error);
+    notFound();
+  }
 
   const getCategoryLabel = (category: string) => {
-    switch (category) {
-      case 'pioneers': return 'Top 10 Now';
-      case 'collaborators': return 'Highlights';
-      case 'emerging': return 'New Releases';
-      default: return category;
-    }
+    const labels: { [key: string]: string } = {
+      'pioneers': 'Top 10 Now',
+      'collaborators': 'Highlights',
+      'emerging': 'New Releases'
+    };
+    return labels[category] || category;
   };
-
-  if (loading) {
-    return (
-      <div style={{ paddingTop: '100px', minHeight: '100vh' }}>
-        <div className="container">
-          <div className="loading">Loading artist...</div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error || !artist) {
-    return (
-      <div style={{ paddingTop: '100px', minHeight: '100vh' }}>
-        <div className="container">
-          <div className="error">Error: {error || 'Artist not found'}</div>
-          <Link href="/artists" className="btn btn-primary" style={{ marginTop: '1rem' }}>
-            Back to Artists
-          </Link>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div style={{ paddingTop: '100px', minHeight: '100vh' }}>
-      {/* Hero Section */}
-      <section className="page-hero">
+      <StructuredData 
+        type="Person" 
+        data={{
+          name: artist.name,
+          description: artist.bio,
+          image: artist.image,
+          url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://injai-channel.com'}/artists/${artist.id}`,
+          jobTitle: 'Rap Artist',
+          worksFor: {
+            '@type': 'Organization',
+            name: 'Injai Channel',
+          },
+          sameAs: [
+            artist.youtube,
+            artist.instagram,
+            artist.twitter,
+            artist.tiktok,
+          ].filter(Boolean),
+          knowsAbout: ['Rap Music', 'Hip-Hop', 'Music Production', 'Guigui Rap'],
+        }} 
+      />
+      
+      {/* Artist Header */}
+      <section className="artist-header">
         <div className="container">
-          <div className="artist-header">
-            <div className="artist-image-large">
+          <div className="artist-info">
+            <div className="artist-image">
               <Image
                 src={artist.image}
                 alt={artist.name}
                 width={400}
                 height={400}
-                style={{ objectFit: 'cover', borderRadius: '10px' }}
+                style={{ objectFit: 'cover' }}
+                priority
               />
             </div>
             <div className="artist-details">
-              <h1 className="page-title">{artist.name}</h1>
-              <div className="artist-category">
-                <span className="category-badge">{getCategoryLabel(artist.category)}</span>
+              <div className="artist-meta">
+                <span className="artist-category">{getCategoryLabel(artist.category)}</span>
+                {artist.featured && <span className="featured-badge">Featured</span>}
               </div>
+              <h1 className="artist-name">{artist.name}</h1>
+              <div 
+                className="artist-bio"
+                dangerouslySetInnerHTML={{ __html: artist.bio }}
+              />
+              
+              {/* Artist Stats */}
               <div className="artist-stats">
                 <div className="stat-item">
-                  <span className="stat-number">{artist.stats.yearsActive}+</span>
+                  <span className="stat-number">{artist.yearsActive}+</span>
                   <span className="stat-label">Years Active</span>
                 </div>
                 <div className="stat-item">
-                  <span className="stat-number">{artist.stats.tracksReleased}+</span>
+                  <span className="stat-number">{artist.tracksReleased}+</span>
                   <span className="stat-label">Tracks Released</span>
                 </div>
                 <div className="stat-item">
-                  <span className="stat-number">{artist.stats.streams.toLocaleString()}+</span>
+                  <span className="stat-number">{artist.streams.toLocaleString()}+</span>
                   <span className="stat-label">Streams</span>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Bio Section */}
-      <section className="artist-bio-section">
-        <div className="container">
-          <div className="bio-content">
-            <h2>About {artist.name}</h2>
-            <div className="bio-text">
-              {showFullBio ? (
-                <p>{artist.bio}</p>
-              ) : (
-                <p>{artist.bio.length > 200 ? `${artist.bio.substring(0, 200)}...` : artist.bio}</p>
-              )}
-              {artist.bio.length > 200 && (
-                <button 
-                  className="btn btn-outline"
-                  onClick={() => setShowFullBio(!showFullBio)}
-                  style={{ marginTop: '1rem' }}
-                >
-                  {showFullBio ? 'Show Less' : 'Learn More'}
-                </button>
-              )}
+              {/* Social Links */}
+              <div className="artist-social">
+                {artist.youtube && (
+                  <Link href={artist.youtube} target="_blank" className="social-link youtube">
+                    <i className="fab fa-youtube"></i>
+                    <span>YouTube</span>
+                  </Link>
+                )}
+                {artist.instagram && (
+                  <Link href={artist.instagram} target="_blank" className="social-link instagram">
+                    <i className="fab fa-instagram"></i>
+                    <span>Instagram</span>
+                  </Link>
+                )}
+                {artist.twitter && (
+                  <Link href={artist.twitter} target="_blank" className="social-link twitter">
+                    <i className="fab fa-twitter"></i>
+                    <span>Twitter</span>
+                  </Link>
+                )}
+                {artist.tiktok && (
+                  <Link href={artist.tiktok} target="_blank" className="social-link tiktok">
+                    <i className="fab fa-tiktok"></i>
+                    <span>TikTok</span>
+                  </Link>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -146,16 +191,16 @@ export default function ArtistDetailPage() {
       {/* Related Content */}
       <section className="related-content">
         <div className="container">
-          <h2 className="section-title">Related Content</h2>
+          <h2 className="section-title">More Artists</h2>
           <div className="related-links">
-            <Link href="/videos" className="btn btn-primary">
-              Watch Videos
-            </Link>
-            <Link href="/events" className="btn btn-secondary">
-              Upcoming Events
-            </Link>
-            <Link href="/artists" className="btn btn-outline">
+            <Link href="/artists" className="btn btn-primary">
               All Artists
+            </Link>
+            <Link href="/videos" className="btn btn-secondary">
+              Videos
+            </Link>
+            <Link href="/events" className="btn btn-outline">
+              Events
             </Link>
           </div>
         </div>

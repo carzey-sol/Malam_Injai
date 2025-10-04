@@ -1,11 +1,12 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { prisma } from '@/lib/prisma';
 import SocialShare from '@/components/SocialShare';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import StructuredData from '@/components/StructuredData';
+import { generateMetadata as generateSEOMetadata } from '@/lib/seo';
 
 interface NewsArticle {
   id: string;
@@ -14,120 +15,144 @@ interface NewsArticle {
   image: string;
   excerpt: string;
   author: string;
-  publishedAt: string;
+  publishedAt: Date;
+  updatedAt: Date;
   category: 'GENERAL' | 'RELEASES' | 'EVENTS' | 'INTERVIEWS' | 'INDUSTRY';
   featured: boolean;
-  links?: {
-    text: string;
-    url: string;
-  }[];
+  links: any;
 }
 
-export default function NewsArticlePage() {
-  const params = useParams();
-  const router = useRouter();
-  const [article, setArticle] = useState<NewsArticle | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [shareUrl, setShareUrl] = useState('');
-
-  useEffect(() => {
-    if (params.id) {
-      fetchArticle(params.id as string);
-    }
-  }, [params.id]);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setShareUrl(`${window.location.origin}/news/${params.id}`);
-    }
-  }, [params.id]);
-
-  const fetchArticle = async (id: string) => {
-    try {
-      const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
-      const response = await fetch(`${baseUrl}/api/news/${id}`);
-      if (!response.ok) {
-        throw new Error('Article not found');
-      }
-      const data = await response.json();
-      setArticle(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch article');
-    } finally {
-      setLoading(false);
-    }
+interface NewsArticlePageProps {
+  params: {
+    id: string;
   };
+}
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
+export async function generateMetadata({ params }: NewsArticlePageProps): Promise<Metadata> {
+  try {
+    const article = await prisma.newsArticle.findUnique({
+      where: { id: params.id }
+    });
+
+    if (!article) {
+      return generateSEOMetadata({
+        title: 'Article Not Found',
+        description: 'The requested article could not be found.',
+        noindex: true,
+      });
+    }
+
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://injai-channel.com';
+    const articleUrl = `${siteUrl}/news/${article.id}`;
+
+    return generateSEOMetadata({
+      title: article.title,
+      description: article.excerpt,
+      keywords: ['Guigui rap', 'music news', article.category.toLowerCase(), 'rap culture'],
+      image: article.image,
+      url: articleUrl,
+      type: 'article',
+      publishedTime: article.publishedAt.toISOString(),
+      modifiedTime: article.updatedAt.toISOString(),
+      author: article.author,
+      section: article.category,
+      tags: [article.category],
+      canonical: articleUrl,
+    });
+  } catch (error) {
+    console.error('Error generating metadata:', error);
+    return generateSEOMetadata({
+      title: 'Article Not Found',
+      description: 'The requested article could not be found.',
+      noindex: true,
+    });
+  }
+}
+
+export default async function NewsArticlePage({ params }: NewsArticlePageProps) {
+  let article: NewsArticle | null = null;
+  let shareUrl = '';
+
+  try {
+    article = await prisma.newsArticle.findUnique({
+      where: { id: params.id }
+    });
+
+    if (!article) {
+      notFound();
+    }
+
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://injai-channel.com';
+    shareUrl = `${siteUrl}/news/${article.id}`;
+  } catch (error) {
+    console.error('Error fetching article:', error);
+    notFound();
+  }
+
+  const formatDate = (date: Date | string) => {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    return dateObj.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     });
   };
 
-  const getCategoryLabel = (category: string) => {
-    switch (category) {
-      case 'GENERAL': return 'General';
-      case 'RELEASES': return 'New Releases';
-      case 'EVENTS': return 'Events';
-      case 'INTERVIEWS': return 'Interviews';
-      case 'INDUSTRY': return 'Industry News';
-      default: return category;
-    }
-  };
-
-  if (loading) {
-    return (
-      <div style={{ paddingTop: '100px', minHeight: '100vh' }}>
-        <div className="container">
-          <div className="loading">Loading article...</div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error || !article) {
-    return (
-      <div style={{ paddingTop: '100px', minHeight: '100vh' }}>
-        <div className="container">
-          <div className="error">Error: {error || 'Article not found'}</div>
-          <Link href="/news" className="btn btn-primary" style={{ marginTop: '1rem' }}>
-            Back to News
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div style={{ paddingTop: '100px', minHeight: '100vh' }}>
+      <StructuredData 
+        type="Article" 
+        data={{
+          headline: article.title,
+          description: article.excerpt,
+          image: article.image,
+          datePublished: article.publishedAt,
+          dateModified: article.updatedAt,
+          author: {
+            '@type': 'Person',
+            name: article.author,
+          },
+          publisher: {
+            '@type': 'Organization',
+            name: 'Injai Channel',
+            logo: {
+              '@type': 'ImageObject',
+              url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://injai-channel.com'}/logo.png`,
+            },
+          },
+          mainEntityOfPage: {
+            '@type': 'WebPage',
+            '@id': `${process.env.NEXT_PUBLIC_SITE_URL || 'https://injai-channel.com'}/news/${article.id}`,
+          },
+          articleSection: article.category,
+          keywords: ['Guigui rap', 'music news', article.category.toLowerCase()],
+        }} 
+      />
+      
       {/* Article Header */}
       <section className="article-header">
         <div className="container">
           <div className="article-meta">
-            <span className="article-category">{getCategoryLabel(article.category)}</span>
+            <span className="article-category">{article.category}</span>
             <span className="article-date">{formatDate(article.publishedAt)}</span>
+            <span className="article-author">By {article.author}</span>
           </div>
           <h1 className="article-title">{article.title}</h1>
-          <div className="article-author">
-            <span>By {article.author}</span>
-          </div>
+          <p className="article-excerpt">{article.excerpt}</p>
         </div>
       </section>
 
       {/* Article Image */}
       <section className="article-image-section">
         <div className="container">
-          <div className="article-image-large">
+          <div className="article-image">
             <Image
               src={article.image}
               alt={article.title}
-              width={800}
-              height={400}
-              style={{ objectFit: 'cover', borderRadius: '10px' }}
+              width={1200}
+              height={600}
+              style={{ objectFit: 'cover' }}
+              priority
             />
           </div>
         </div>
@@ -154,11 +179,11 @@ export default function NewsArticlePage() {
             )}
             
             {/* Article Links */}
-            {article.links && article.links.length > 0 && (
+            {article.links && Array.isArray(article.links) && article.links.length > 0 && (
               <div className="article-links">
                 <h3>Related Links</h3>
                 <div className="links-grid">
-                  {article.links.map((link, index) => (
+                  {article.links.map((link: any, index: number) => (
                     <Link 
                       key={index} 
                       href={link.url} 

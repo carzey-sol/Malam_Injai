@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import ImageUpload from '@/components/ImageUpload';
 import RichTextEditor from '@/components/admin/RichTextEditor';
+import LinkPreview from '@/components/LinkPreview';
 
 interface NewsArticle {
   id: string;
@@ -38,7 +39,8 @@ export default function AdminNewsPage() {
     author: '',
     category: 'GENERAL' as 'GENERAL' | 'RELEASES' | 'EVENTS' | 'INTERVIEWS' | 'INDUSTRY',
     featured: false,
-    links: [{ text: '', url: '' }]
+    links: [{ text: '', url: '' }],
+    previewUrl: ''
   });
 
   useEffect(() => {
@@ -94,7 +96,8 @@ export default function AdminNewsPage() {
       author: article.author,
       category: article.category,
       featured: article.featured,
-      links: article.links.length > 0 ? article.links : [{ text: '', url: '' }]
+      links: article.links.length > 0 ? article.links : [{ text: '', url: '' }],
+      previewUrl: ''
     });
   };
 
@@ -132,7 +135,8 @@ export default function AdminNewsPage() {
         author: '',
         category: 'GENERAL',
         featured: false,
-        links: [{ text: '', url: '' }]
+        links: [{ text: '', url: '' }],
+        previewUrl: ''
       });
       setEditingArticle(null);
       loadArticles();
@@ -256,6 +260,23 @@ export default function AdminNewsPage() {
             </div>
             
             <div className="form-group">
+              <label>Preview URL (Optional)</label>
+              <input 
+                type="url"
+                value={formData.previewUrl} 
+                onChange={(e) => setFormData({ ...formData, previewUrl: e.target.value })} 
+                placeholder="https://example.com"
+              />
+              <small>Enter a URL to generate a preview for social sharing</small>
+              {formData.previewUrl && (
+                <LinkPreview 
+                  url={formData.previewUrl}
+                  type="external"
+                />
+              )}
+            </div>
+            
+            <div className="form-group">
               <label>
                 <input 
                   type="checkbox" 
@@ -322,7 +343,8 @@ export default function AdminNewsPage() {
                     author: '',
                     category: 'GENERAL',
                     featured: false,
-                    links: [{ text: '', url: '' }]
+                    links: [{ text: '', url: '' }],
+                    previewUrl: ''
                   });
                 }}
               >

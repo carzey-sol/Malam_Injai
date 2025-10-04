@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import ImageUpload from '@/components/ImageUpload';
 import RichTextEditor from '@/components/admin/RichTextEditor';
+import LinkPreview from '@/components/LinkPreview';
 
 export default function NewNewsPage() {
   const { user, loading } = useAuth();
@@ -20,6 +21,7 @@ export default function NewNewsPage() {
   const [category, setCategory] = useState('GENERAL');
   const [featured, setFeatured] = useState(false);
   const [links, setLinks] = useState([{ text: '', url: '' }]);
+  const [previewUrl, setPreviewUrl] = useState('');
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -153,6 +155,23 @@ export default function NewNewsPage() {
               folder="news"
               label="Article Image"
             />
+          </div>
+          
+          <div className="form-group">
+            <label>Preview URL (Optional)</label>
+            <input 
+              type="url"
+              value={previewUrl} 
+              onChange={(e) => setPreviewUrl(e.target.value)} 
+              placeholder="https://example.com"
+            />
+            <small>Enter a URL to generate a preview for social sharing</small>
+            {previewUrl && (
+              <LinkPreview 
+                url={previewUrl}
+                type="external"
+              />
+            )}
           </div>
           
           <div className="form-group">

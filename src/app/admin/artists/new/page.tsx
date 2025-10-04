@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import ImageUpload from '@/components/ImageUpload';
+import RichTextEditor from '@/components/admin/RichTextEditor';
 
 export default function NewArtistPage() {
   const { user, loading } = useAuth();
@@ -19,8 +20,29 @@ export default function NewArtistPage() {
   const [featured, setFeatured] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [categoryStats, setCategoryStats] = useState<{ [key: string]: number }>({});
 
   useEffect(() => { if (!loading && !user) router.push('/admin'); }, [user, loading, router]);
+
+  useEffect(() => {
+    fetchCategoryStats();
+  }, []);
+
+  const fetchCategoryStats = async () => {
+    try {
+      const response = await fetch('/api/artists');
+      if (response.ok) {
+        const data = await response.json();
+        const stats: { [key: string]: number } = {};
+        data.forEach((artist: any) => {
+          stats[artist.category] = (stats[artist.category] || 0) + 1;
+        });
+        setCategoryStats(stats);
+      }
+    } catch (error) {
+      console.error('Failed to fetch category stats:', error);
+    }
+  };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,15 +79,21 @@ export default function NewArtistPage() {
             <div className="form-group">
               <label>Category</label>
               <select value={category} onChange={(e)=>setCategory(e.target.value as any)}>
-                <option value="pioneers">Top 10 Now</option>
-                <option value="collaborators">Highlights</option>
-                <option value="emerging">New Releases</option>
+                <option value="pioneers">Top 10 Now ({categoryStats.pioneers || 0})</option>
+                <option value="collaborators">Highlights ({categoryStats.collaborators || 0})</option>
+                <option value="emerging">New Releases ({categoryStats.emerging || 0})</option>
               </select>
+              <small>Current artists in each category</small>
             </div>
           </div>
           <div className="form-group">
             <label>Bio</label>
-            <textarea rows={4} value={bio} onChange={(e)=>setBio(e.target.value)} required />
+            <RichTextEditor
+              value={bio}
+              onChange={setBio}
+              placeholder="Write the artist's bio here..."
+              height="200px"
+            />
           </div>
           <div className="form-row">
             <div className="form-group">

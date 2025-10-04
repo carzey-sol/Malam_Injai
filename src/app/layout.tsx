@@ -3,13 +3,57 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { AuthProvider } from '@/contexts/AuthContext'
 import LayoutShell from '@/components/LayoutShell'
+import GoogleAnalytics from '@/components/GoogleAnalytics'
+import { defaultSEOConfig } from '@/lib/seo'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Injai Channel - Guigui Rap Culture Hub',
-  description: 'Injai Channel - The premier destination for Guigui rap culture. Discover the latest videos, artists, and events in the Guigui rap scene.',
-  keywords: 'Injai Channel, Guigui rap, hip-hop, music, artists, videos, events',
+  ...defaultSEOConfig,
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://injai-channel.com'),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    type: 'website',
+    title: defaultSEOConfig.title,
+    description: defaultSEOConfig.description,
+    url: '/',
+    siteName: 'Injai Channel',
+    images: [
+      {
+        url: '/og-default.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Injai Channel - Guigui Rap Culture Hub',
+      },
+    ],
+    locale: 'en_US',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: defaultSEOConfig.title,
+    description: defaultSEOConfig.description,
+    images: ['/og-default.jpg'],
+    creator: '@injai_channel',
+    site: '@injai_channel',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION,
+    yandex: process.env.YANDEX_VERIFICATION,
+    yahoo: process.env.YAHOO_VERIFICATION,
+  },
 }
 
 export default function RootLayout({
@@ -24,6 +68,7 @@ export default function RootLayout({
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
       </head>
       <body className={inter.className}>
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || ''} />
         <AuthProvider>
           <LayoutShell>
             {children}

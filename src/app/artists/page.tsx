@@ -27,6 +27,7 @@ export default function ArtistsPage() {
   const [error, setError] = useState('');
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [categoryStats, setCategoryStats] = useState<{ [key: string]: number }>({});
 
   useEffect(() => {
     fetchArtists();
@@ -44,6 +45,13 @@ export default function ArtistsPage() {
       }
       const data = await response.json();
       setArtists(data);
+      
+      // Calculate category statistics
+      const stats: { [key: string]: number } = {};
+      data.forEach((artist: Artist) => {
+        stats[artist.category] = (stats[artist.category] || 0) + 1;
+      });
+      setCategoryStats(stats);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -91,10 +99,10 @@ export default function ArtistsPage() {
   }
 
   const categoryOptions = [
-    { value: 'all', label: 'All Artists' },
-    { value: 'pioneers', label: 'Top 10 Now' },
-    { value: 'collaborators', label: 'Highlights' },
-    { value: 'emerging', label: 'New Releases' }
+    { value: 'all', label: `All Artists (${artists.length})` },
+    { value: 'pioneers', label: `Top 10 Now (${categoryStats.pioneers || 0})` },
+    { value: 'collaborators', label: `Highlights (${categoryStats.collaborators || 0})` },
+    { value: 'emerging', label: `New Releases (${categoryStats.emerging || 0})` }
   ];
 
   return (
@@ -145,7 +153,10 @@ export default function ArtistsPage() {
                 </div>
                 <div className="artist-info">
                   <h3>{artist.name}</h3>
-                  <p>{artist.bio}</p>
+                  <div 
+                    className="artist-bio"
+                    dangerouslySetInnerHTML={{ __html: artist.bio }}
+                  />
                   <div style={{ 
                     display: 'flex', 
                     gap: '1rem', 

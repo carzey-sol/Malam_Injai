@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import ImageUpload from '@/components/ImageUpload';
+import RichTextEditor from '@/components/admin/RichTextEditor';
 
 interface Artist {
   id: string;
@@ -29,6 +30,7 @@ export default function AdminArtistsPage() {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [editingArtist, setEditingArtist] = useState<Artist | null>(null);
+  const [categoryStats, setCategoryStats] = useState<{ [key: string]: number }>({});
   const [formData, setFormData] = useState({
     name: '',
     bio: '',
@@ -52,11 +54,19 @@ export default function AdminArtistsPage() {
   }, []);
 
   const loadArtists = async () => {
-      try {
+    try {
       setLoadingArtists(true);
-        const res = await fetch('/api/artists');
-        if (!res.ok) throw new Error('Failed to fetch artists');
-        setArtists(await res.json());
+      const res = await fetch('/api/artists');
+      if (!res.ok) throw new Error('Failed to fetch artists');
+      const data = await res.json();
+      setArtists(data);
+      
+      // Calculate category statistics
+      const stats: { [key: string]: number } = {};
+      data.forEach((artist: Artist) => {
+        stats[artist.category] = (stats[artist.category] || 0) + 1;
+      });
+      setCategoryStats(stats);
     } catch (e: any) { 
       setError(e.message); 
     } finally { 
@@ -195,19 +205,20 @@ export default function AdminArtistsPage() {
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value as any })}
                 >
-                  <option value="pioneers">Top 10 Now</option>
-                  <option value="collaborators">Highlights</option>
-                  <option value="emerging">New Releases</option>
+                  <option value="pioneers">Top 10 Now ({categoryStats.pioneers || 0})</option>
+                  <option value="collaborators">Highlights ({categoryStats.collaborators || 0})</option>
+                  <option value="emerging">New Releases ({categoryStats.emerging || 0})</option>
                 </select>
+                <small>Current artists in each category</small>
               </div>
             </div>
             <div className="form-group">
               <label>Bio</label>
-              <textarea
-                rows={4}
+              <RichTextEditor
                 value={formData.bio}
-                onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                required
+                onChange={(value) => setFormData({ ...formData, bio: value })}
+                placeholder="Write the artist's bio here..."
+                height="200px"
               />
             </div>
             <div className="form-row">
@@ -310,7 +321,10 @@ export default function AdminArtistsPage() {
             </div>
             <div className="artist-info">
                   <h3>{artist.name}</h3>
-                  <p>{artist.bio}</p>
+                  <div 
+                    className="artist-bio"
+                    dangerouslySetInnerHTML={{ __html: artist.bio }}
+                  />
                   <div style={{ marginTop: '1rem', fontSize: '14px', color: '#666' }}>
                     <p>Category: {artist.category}</p>
                     <p>Years Active: {artist.stats.yearsActive}</p>
