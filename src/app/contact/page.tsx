@@ -59,14 +59,7 @@ export default function ContactPage() {
         subtitle={getInTouch.headline || 'Get in Touch with Injai Channel'}
       />
 
-      <section className="contact-page">
-        <div className="container">
-          <ContactInfo
-            getInTouch={getInTouch}
-            socialLinks={socialLinks}
-          />
-        </div>
-      </section>
+      
 
       <section className="contact-cta">
         <div className="container">
@@ -87,6 +80,15 @@ export default function ContactPage() {
               Send Us a Message
             </a>
           </div>
+        </div>
+      </section>
+      
+      <section className="contact-page">
+        <div className="container">
+          <ContactInfo
+            getInTouch={getInTouch}
+            socialLinks={socialLinks}
+          />
         </div>
       </section>
 
