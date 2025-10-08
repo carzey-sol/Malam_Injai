@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { getYouTubeEmbedUrl, getYouTubeThumbnail } from '@/lib/youtube';
+import Loader from '@/components/Loader';
 
 interface Video {
   id: string;
@@ -301,7 +302,9 @@ export default function AdminVideosPage() {
           </div>
         </div>
         {loadingVideos ? (
-          <div className="loading">Loading videos...</div>
+          <div className="admin-loading">
+            <Loader size="medium" text="Loading videos..." />
+          </div>
         ) : filteredVideos.length === 0 ? (
           <div className="no-results">No videos found</div>
         ) : (

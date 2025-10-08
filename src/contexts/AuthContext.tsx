@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import Loader from '@/components/Loader';
 
 interface User {
   id: string;
@@ -107,7 +108,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider value={value}>
-      {children}
+      {loading ? (
+        <Loader 
+          size="large" 
+          text="Initializing..." 
+          fullScreen={true} 
+        />
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   );
 }

@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import ImageUpload from '@/components/ImageUpload';
 import RichTextEditor from '@/components/admin/RichTextEditor';
+import Loader from '@/components/Loader';
 
 interface Artist {
   id: string;
@@ -315,7 +316,9 @@ export default function AdminArtistsPage() {
           </div>
         </div>
         {loadingArtists ? (
-          <div className="loading">Loading artists...</div>
+          <div className="admin-loading">
+            <Loader size="medium" text="Loading artists..." />
+          </div>
         ) : filteredArtists.length === 0 ? (
           <div className="no-results">No artists found</div>
         ) : (

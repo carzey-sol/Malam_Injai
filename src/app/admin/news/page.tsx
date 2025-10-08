@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import ImageUpload from '@/components/ImageUpload';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import LinkPreview from '@/components/LinkPreview';
+import Loader from '@/components/Loader';
 
 interface NewsArticle {
   id: string;
@@ -391,7 +392,9 @@ export default function AdminNewsPage() {
           </div>
         </div>
         {loadingArticles ? (
-          <div className="loading">Loading articles...</div>
+          <div className="admin-loading">
+            <Loader size="medium" text="Loading articles..." />
+          </div>
         ) : filteredArticles.length === 0 ? (
           <div className="no-results">No articles found</div>
         ) : (

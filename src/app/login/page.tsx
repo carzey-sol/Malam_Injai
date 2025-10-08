@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import Loader from '@/components/Loader';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -69,7 +70,7 @@ export default function LoginPage() {
         
         <button 
           type="submit" 
-          className="btn btn-primary"
+          className={`btn btn-primary ${loading ? 'btn-loading' : ''}`}
           disabled={loading}
         >
           {loading ? 'Logging in...' : 'Login'}

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import Loader from '@/components/Loader';
 
 export default function SignupPage() {
   const [username, setUsername] = useState('');
@@ -106,7 +107,7 @@ export default function SignupPage() {
         
         <button 
           type="submit" 
-          className="btn btn-primary"
+          className={`btn btn-primary ${loading ? 'btn-loading' : ''}`}
           disabled={loading}
         >
           {loading ? 'Creating account...' : 'Sign up'}

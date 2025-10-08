@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import ImageUpload from '@/components/ImageUpload';
+import Loader from '@/components/Loader';
 
 interface Event {
   id: string;
@@ -330,7 +331,9 @@ export default function AdminEventsPage() {
           </div>
         </div>
         {loadingEvents ? (
-          <div className="loading">Loading events...</div>
+          <div className="admin-loading">
+            <Loader size="medium" text="Loading events..." />
+          </div>
         ) : filteredEvents.length === 0 ? (
           <div className="no-results">No events found</div>
         ) : (
