@@ -1869,13 +1869,7 @@ h1, h2, h3, h4, h5, h6 {
     text-align: center;
     
 }
-.artist-bio {
-    display: -webkit-box;
-    -webkit-line-clamp: 2; /* limit to 2 lines */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+
 
 .bio-content h2 {
     margin-bottom: 2rem;
@@ -1942,6 +1936,16 @@ h1, h2, h3, h4, h5, h6 {
     width: 100%;
     height: 250px;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.news-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
 }
 
 .news-content {
@@ -2035,6 +2039,16 @@ h1, h2, h3, h4, h5, h6 {
     position: relative;
     border-radius: 10px;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.featured-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
 }
 
 .featured-text h3 {
@@ -3649,6 +3663,33 @@ h1, h2, h3, h4, h5, h6 {
 .article-body {
     line-height: 1.6;
     color: var(--text-color);
+}
+
+/* Artist Bio Truncation */
+.artist-bio-truncated {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 3.2em; /* Approximately 2 lines with line-height 1.6 */
+    line-height: 1.6;
+}
+
+/* For HTML content in truncated bio */
+.artist-bio-truncated p,
+.artist-bio-truncated div,
+.artist-bio-truncated span {
+    margin: 0;
+    display: inline;
+}
+
+.artist-bio-truncated p:first-child {
+    margin-top: 0;
+}
+
+.artist-bio-truncated p:last-child {
+    margin-bottom: 0;
 }
 
 .artist-bio h1,

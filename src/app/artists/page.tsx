@@ -78,6 +78,7 @@ export default function ArtistsPage() {
     setFilteredArtists(filtered);
   };
 
+
   if (loading) {
     return (
       <div style={{ paddingTop: '100px', minHeight: '100vh' }}>
@@ -154,7 +155,7 @@ export default function ArtistsPage() {
                 <div className="artist-info">
                   <h3>{artist.name}</h3>
                   <div 
-                    className="artist-bio"
+                    className="artist-bio artist-bio-truncated"
                     dangerouslySetInnerHTML={{ __html: artist.bio }}
                   />
                   <div style={{ 
@@ -169,7 +170,7 @@ export default function ArtistsPage() {
                     <span>{artist.stats.streams.toLocaleString()}+ streams</span>
                   </div>
                   <Link href={`/artists/${artist._id}`} className="btn btn-small" style={{ marginTop: '1rem' }}>
-                    Learn More
+                    View Details
                   </Link>
                 </div>
               </div>

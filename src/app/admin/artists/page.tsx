@@ -161,6 +161,7 @@ export default function AdminArtistsPage() {
     });
   };
 
+
   if (loading || !user) return null;
 
   return (
@@ -221,23 +222,13 @@ export default function AdminArtistsPage() {
                 height="200px"
               />
             </div>
-            <div className="form-row">
-              <div className="form-group">
-                <ImageUpload
-                  onImageUpload={(url) => setFormData({ ...formData, image: url, thumbnail: url })}
-                  currentImage={formData.image}
-                  folder="artists/main"
-                  label="Artist Image"
-                />
-              </div>
-              <div className="form-group">
-                <ImageUpload
-                  onImageUpload={(url) => setFormData({ ...formData, thumbnail: url, image: url })}
-                  currentImage={formData.thumbnail}
-                  folder="artists/thumbnails"
-                  label="Thumbnail Image"
-                />
-              </div>
+            <div className="form-group">
+              <ImageUpload
+                onImageUpload={(url) => setFormData({ ...formData, image: url, thumbnail: url })}
+                currentImage={formData.image}
+                folder="artists/main"
+                label="Artist Image"
+              />
             </div>
             <div className="form-row">
               <div className="form-group">
@@ -322,7 +313,7 @@ export default function AdminArtistsPage() {
             <div className="artist-info">
                   <h3>{artist.name}</h3>
                   <div 
-                    className="artist-bio"
+                    className="artist-bio artist-bio-truncated"
                     dangerouslySetInnerHTML={{ __html: artist.bio }}
                   />
                   <div style={{ marginTop: '1rem', fontSize: '14px', color: '#666' }}>
