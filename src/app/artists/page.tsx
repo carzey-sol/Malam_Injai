@@ -6,6 +6,7 @@ import Image from 'next/image';
 import SearchBar from '@/components/SearchBar';
 import FilterButtons from '@/components/FilterButtons';
 import PageHero from '@/components/PageHero';
+import Loader from '@/components/Loader';
 
 interface Artist {
   _id: string;
@@ -83,7 +84,9 @@ export default function ArtistsPage() {
     return (
       <div style={{ paddingTop: '100px', minHeight: '100vh' }}>
         <div className="container">
-          <h1 style={{ textAlign: 'center', marginBottom: '2rem' }}>Loading artists...</h1>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
+            <Loader size="large" text="Loading artists..." />
+          </div>
         </div>
       </div>
     );

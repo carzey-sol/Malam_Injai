@@ -5,6 +5,7 @@ import Link from 'next/link';
 import SearchBar from '@/components/SearchBar';
 import FilterButtons from '@/components/FilterButtons';
 import PageHero from '@/components/PageHero';
+import Loader from '@/components/Loader';
 
 interface Event {
   id: string;
@@ -120,8 +121,12 @@ export default function EventsPage() {
 
   if (loading) {
     return (
-      <div className="container">
-        <div className="loading">Loading events...</div>
+      <div style={{ paddingTop: '100px', minHeight: '100vh' }}>
+        <div className="container">
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
+            <Loader size="large" text="Loading events..." />
+          </div>
+        </div>
       </div>
     );
   }

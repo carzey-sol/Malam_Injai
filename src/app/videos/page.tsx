@@ -5,6 +5,7 @@ import Link from 'next/link';
 import SearchBar from '@/components/SearchBar';
 import FilterButtons from '@/components/FilterButtons';
 import PageHero from '@/components/PageHero';
+import Loader from '@/components/Loader';
 
 interface PlaylistItem { title: string; thumbnail: string; youtubeId: string }
 interface FeaturedPlaylist { title?: string; description?: string; playlistUrl?: string; items?: PlaylistItem[] }
@@ -101,8 +102,12 @@ export default function VideosPage() {
 
   if (loading) {
     return (
-      <div className="container">
-        <div className="loading">Loading videos...</div>
+      <div style={{ paddingTop: '100px', minHeight: '100vh' }}>
+        <div className="container">
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
+            <Loader size="large" text="Loading videos..." />
+          </div>
+        </div>
       </div>
     );
   }

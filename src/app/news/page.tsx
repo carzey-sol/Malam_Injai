@@ -7,6 +7,7 @@ import SearchBar from '@/components/SearchBar';
 import FilterButtons from '@/components/FilterButtons';
 import PageHero from '@/components/PageHero';
 import NewsletterSignup from '@/components/NewsletterSignup';
+import Loader from '@/components/Loader';
 
 interface NewsArticle {
   id: string;
@@ -88,7 +89,9 @@ export default function NewsPage() {
     return (
       <div style={{ paddingTop: '100px', minHeight: '100vh' }}>
         <div className="container">
-          <div className="loading">Loading news...</div>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
+            <Loader size="large" text="Loading news..." />
+          </div>
         </div>
       </div>
     );
