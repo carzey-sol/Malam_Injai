@@ -38,7 +38,7 @@ export function generateMetadata(config: SEOConfig): Metadata {
   const siteName = 'Injai Channel';
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://injai-channel.com';
   const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
-  const fullImage = image ? (image.startsWith('http') ? image : `${siteUrl}${image}`) : `${siteUrl}/og-default.jpg`;
+  const fullImage = image ? (image.startsWith('http') ? image : `${siteUrl}${image}`) : `${siteUrl}/image.png`;
   const fullUrl = url ? (url.startsWith('http') ? url : `${siteUrl}${url}`) : siteUrl;
 
   const robots = [];
@@ -123,6 +123,6 @@ export const defaultSEOConfig: SEOConfig = {
   title: 'Injai Channel - Guigui Rap Culture Hub',
   description: 'The premier destination for Guigui rap culture. Discover the latest videos, artists, and events in the Guigui rap scene.',
   keywords: ['Injai Channel', 'Guigui rap', 'hip-hop', 'music', 'artists', 'videos', 'events', 'Guinea rap', 'African rap'],
-  image: '/og-default.jpg',
+  image: '/image.png',
   type: 'website',
 };

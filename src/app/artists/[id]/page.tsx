@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: ArtistDetailPageProps): Promi
 
     return generateSEOMetadata({
       title: `${artist.name} - Guigui Rap Artist`,
-      description: artist.bio,
+      description: artist.bio.replace(/<[^>]*>/g, '').substring(0, 160), // Strip HTML and limit length
       keywords: ['Guigui rap', 'rap artist', artist.name, 'music', 'hip-hop', 'African rap'],
       image: artist.image,
       url: artistUrl,

@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     siteName: 'Injai Channel',
     images: [
       {
-        url: '/og-default.jpg',
+        url: '/image.png',
         width: 1200,
         height: 630,
         alt: 'Injai Channel - Guigui Rap Culture Hub',
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: defaultSEOConfig.title,
     description: defaultSEOConfig.description,
-    images: ['/og-default.jpg'],
+    images: ['/image.png'],
     creator: '@injai_channel',
     site: '@injai_channel',
   },

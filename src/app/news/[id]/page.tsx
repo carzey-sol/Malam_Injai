@@ -47,7 +47,7 @@ export async function generateMetadata({ params }: NewsArticlePageProps): Promis
 
     return generateSEOMetadata({
       title: article.title,
-      description: article.excerpt,
+      description: article.excerpt.substring(0, 160), // Ensure description is not too long
       keywords: ['Guigui rap', 'music news', article.category.toLowerCase(), 'rap culture'],
       image: article.image,
       url: articleUrl,
