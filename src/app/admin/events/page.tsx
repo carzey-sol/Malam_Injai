@@ -26,10 +26,12 @@ export default function AdminEventsPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const [events, setEvents] = useState<Event[]>([]);
+  const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [loadingEvents, setLoadingEvents] = useState(true);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -54,6 +56,10 @@ export default function AdminEventsPage() {
     loadEvents();
   }, []);
 
+  useEffect(() => {
+    filterEvents();
+  }, [events, searchTerm]);
+
   const loadEvents = async () => {
       try {
       setLoadingEvents(true);
@@ -65,6 +71,21 @@ export default function AdminEventsPage() {
     } finally { 
       setLoadingEvents(false); 
     }
+  };
+
+  const filterEvents = () => {
+    if (!searchTerm) {
+      setFilteredEvents(events);
+      return;
+    }
+
+    const filtered = events.filter(event =>
+      event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      event.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      event.type.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredEvents(filtered);
   };
 
   const handleDelete = async (eventId: string) => {
@@ -296,49 +317,62 @@ export default function AdminEventsPage() {
 
       {/* Events List */}
       <div className="admin-form">
-        <h2>All Events</h2>
+        <div className="admin-list-header">
+          <h2>All Events</h2>
+          <div className="search-container">
+            <input
+              type="text"
+              placeholder="Search events..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+            />
+          </div>
+        </div>
         {loadingEvents ? (
           <div className="loading">Loading events...</div>
-        ) : events.length === 0 ? (
+        ) : filteredEvents.length === 0 ? (
           <div className="no-results">No events found</div>
         ) : (
-          <div className="admin-grid">
-            {events.map((event) => (
-              <div key={event.id} className="admin-card">
-                <div className="admin-card-actions">
-                  <button 
-                    className="btn-edit"
-                    onClick={() => handleEdit(event)}
-                    title="Edit Event"
-                  >
-                    Edit
-                  </button>
-                  <button 
-                    className="btn-delete"
-                    onClick={() => handleDelete(event.id)}
-                    title="Delete Event"
-                  >
-                    Delete
-                  </button>
+          <div className="admin-list">
+            {filteredEvents.map((event) => (
+              <div key={event.id} className="admin-list-item">
+                <div className="admin-list-image">
+                  <img src={event.image} alt={event.title} />
                 </div>
-            <div className="event-date">
-                  <span className="day">{new Date(event.date).getDate()}</span>
-                  <span className="month">{new Date(event.date).toLocaleDateString('en-US',{month:'short'}).toUpperCase()}</span>
-            </div>
-            <div className="event-info">
-                  <h3>{event.title}</h3>
-                  <p>{event.description}</p>
-                  <div style={{ marginTop: '1rem', fontSize: '14px', color: '#666' }}>
-                    <p>Location: {event.location}</p>
-                    <p>Type: {event.type}</p>
-                    <p>Status: {event.status}</p>
-                    {event.ticketPrice && <p>Price: ${event.ticketPrice}</p>}
-                    {event.capacity && <p>Capacity: {event.capacity}</p>}
-                    {event.featured && <span className="status">Featured</span>}
+                <div className="admin-list-content">
+                  <div className="admin-list-header-content">
+                    <h3>{event.title}</h3>
+                    <div className="admin-list-actions">
+                      <button 
+                        className="btn btn-small btn-edit"
+                        onClick={() => handleEdit(event)}
+                        title="Edit Event"
+                      >
+                        Edit
+                      </button>
+                      <button 
+                        className="btn btn-small btn-delete"
+                        onClick={() => handleDelete(event.id)}
+                        title="Delete Event"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
-            </div>
-          </div>
-        ))}
+                  <p className="admin-list-excerpt">{event.description}</p>
+                  <div className="admin-list-meta">
+                    <span>Date: {new Date(event.date).toLocaleDateString()}</span>
+                    <span>Location: {event.location}</span>
+                    <span>Type: {event.type}</span>
+                    <span>Status: {event.status}</span>
+                    {event.ticketPrice && <span>Price: ${event.ticketPrice}</span>}
+                    {event.capacity && <span>Capacity: {event.capacity}</span>}
+                    {event.featured && <span className="status featured">Featured</span>}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

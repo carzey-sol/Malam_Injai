@@ -27,10 +27,12 @@ export default function AdminNewsPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const [articles, setArticles] = useState<NewsArticle[]>([]);
+  const [filteredArticles, setFilteredArticles] = useState<NewsArticle[]>([]);
   const [loadingArticles, setLoadingArticles] = useState(true);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [editingArticle, setEditingArticle] = useState<NewsArticle | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const [formData, setFormData] = useState({
     title: '',
     content: '',
@@ -53,6 +55,10 @@ export default function AdminNewsPage() {
     loadArticles();
   }, []);
 
+  useEffect(() => {
+    filterArticles();
+  }, [articles, searchTerm]);
+
   const loadArticles = async () => {
     try {
       setLoadingArticles(true);
@@ -64,6 +70,21 @@ export default function AdminNewsPage() {
     } finally { 
       setLoadingArticles(false); 
     }
+  };
+
+  const filterArticles = () => {
+    if (!searchTerm) {
+      setFilteredArticles(articles);
+      return;
+    }
+
+    const filtered = articles.filter(article =>
+      article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      article.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      article.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      article.category.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredArticles(filtered);
   };
 
   const handleDelete = async (articleId: string) => {
@@ -357,42 +378,55 @@ export default function AdminNewsPage() {
 
       {/* Articles List */}
       <div className="admin-form">
-        <h2>All Articles</h2>
+        <div className="admin-list-header">
+          <h2>All Articles</h2>
+          <div className="search-container">
+            <input
+              type="text"
+              placeholder="Search articles..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+            />
+          </div>
+        </div>
         {loadingArticles ? (
           <div className="loading">Loading articles...</div>
-        ) : articles.length === 0 ? (
+        ) : filteredArticles.length === 0 ? (
           <div className="no-results">No articles found</div>
         ) : (
-          <div className="admin-grid">
-            {articles.map((article) => (
-              <div key={article.id} className="admin-card">
-                <div className="admin-card-actions">
-                  <button 
-                    className="btn-edit"
-                    onClick={() => handleEdit(article)}
-                    title="Edit Article"
-                  >
-                    Edit
-                  </button>
-                  <button 
-                    className="btn-delete"
-                    onClick={() => handleDelete(article.id)}
-                    title="Delete Article"
-                  >
-                    Delete
-                  </button>
-                </div>
-                <div className="article-image">
+          <div className="admin-list">
+            {filteredArticles.map((article) => (
+              <div key={article.id} className="admin-list-item">
+                <div className="admin-list-image">
                   <img src={article.image} alt={article.title} />
                 </div>
-                <div className="article-info">
-                  <h3>{article.title}</h3>
-                  <p>{article.excerpt}</p>
-                  <div style={{ marginTop: '1rem', fontSize: '14px', color: '#666' }}>
-                    <p>Author: {article.author}</p>
-                    <p>Category: {article.category}</p>
-                    <p>Published: {new Date(article.publishedAt).toLocaleDateString()}</p>
-                    {article.featured && <span className="status">Featured</span>}
+                <div className="admin-list-content">
+                  <div className="admin-list-header-content">
+                    <h3>{article.title}</h3>
+                    <div className="admin-list-actions">
+                      <button 
+                        className="btn btn-small btn-edit"
+                        onClick={() => handleEdit(article)}
+                        title="Edit Article"
+                      >
+                        Edit
+                      </button>
+                      <button 
+                        className="btn btn-small btn-delete"
+                        onClick={() => handleDelete(article.id)}
+                        title="Delete Article"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                  <p className="admin-list-excerpt">{article.excerpt}</p>
+                  <div className="admin-list-meta">
+                    <span>Author: {article.author}</span>
+                    <span>Category: {article.category}</span>
+                    <span>Published: {new Date(article.publishedAt).toLocaleDateString()}</span>
+                    {article.featured && <span className="status featured">Featured</span>}
                   </div>
                 </div>
               </div>

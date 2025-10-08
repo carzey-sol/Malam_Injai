@@ -26,11 +26,13 @@ export default function AdminVideosPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const [videos, setVideos] = useState<Video[]>([]);
+  const [filteredVideos, setFilteredVideos] = useState<Video[]>([]);
   const [loadingVideos, setLoadingVideos] = useState(true);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [editingVideo, setEditingVideo] = useState<Video | null>(null);
   const [artists, setArtists] = useState<{ id: string; name: string }[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -50,6 +52,10 @@ export default function AdminVideosPage() {
     loadVideos();
     loadArtists();
   }, []);
+
+  useEffect(() => {
+    filterVideos();
+  }, [videos, searchTerm]);
 
   const loadVideos = async () => {
     try {
@@ -74,6 +80,21 @@ export default function AdminVideosPage() {
     } catch (e) {
       console.error('Failed to load artists:', e);
     }
+  };
+
+  const filterVideos = () => {
+    if (!searchTerm) {
+      setFilteredVideos(videos);
+      return;
+    }
+
+    const filtered = videos.filter(video =>
+      video.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      video.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      video.artist.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      video.category.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredVideos(filtered);
   };
 
   const handleDelete = async (videoId: string) => {
@@ -267,50 +288,63 @@ export default function AdminVideosPage() {
 
       {/* Videos List */}
       <div className="admin-form">
-        <h2>All Videos</h2>
+        <div className="admin-list-header">
+          <h2>All Videos</h2>
+          <div className="search-container">
+            <input
+              type="text"
+              placeholder="Search videos..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+            />
+          </div>
+        </div>
         {loadingVideos ? (
           <div className="loading">Loading videos...</div>
-        ) : videos.length === 0 ? (
+        ) : filteredVideos.length === 0 ? (
           <div className="no-results">No videos found</div>
         ) : (
-          <div className="admin-grid">
-            {videos.map((video) => (
-              <div key={video.id} className="admin-card">
-                <div className="admin-card-actions">
-                  <button 
-                    className="btn-edit"
-                    onClick={() => handleEdit(video)}
-                    title="Edit Video"
-                  >
-                    Edit
-                  </button>
-                  <button 
-                    className="btn-delete"
-                    onClick={() => handleDelete(video.id)}
-                    title="Delete Video"
-                  >
-                    Delete
-                  </button>
-                </div>
-                <div className="video-thumbnail-container">
+          <div className="admin-list">
+            {filteredVideos.map((video) => (
+              <div key={video.id} className="admin-list-item">
+                <div className="admin-list-image">
                   <img 
                     src={video.thumbnail || getYouTubeThumbnail(video.youtubeId)} 
                     alt={video.title}
                   />
                 </div>
-            <div className="video-info">
-                  <h3>{video.title}</h3>
-                  <p>{video.description}</p>
-                  <div style={{ marginTop: '1rem', fontSize: '14px', color: '#666' }}>
-                    <p>Artist: {video.artist.name}</p>
-                    <p>Category: {video.category}</p>
-                    <p>Views: {video.views.toLocaleString()}</p>
-                    <p>Uploaded: {new Date(video.uploadDate).toLocaleDateString()}</p>
-                    {video.featured && <span className="status">Featured</span>}
+                <div className="admin-list-content">
+                  <div className="admin-list-header-content">
+                    <h3>{video.title}</h3>
+                    <div className="admin-list-actions">
+                      <button 
+                        className="btn btn-small btn-edit"
+                        onClick={() => handleEdit(video)}
+                        title="Edit Video"
+                      >
+                        Edit
+                      </button>
+                      <button 
+                        className="btn btn-small btn-delete"
+                        onClick={() => handleDelete(video.id)}
+                        title="Delete Video"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
-            </div>
-          </div>
-        ))}
+                  <p className="admin-list-excerpt">{video.description}</p>
+                  <div className="admin-list-meta">
+                    <span>Artist: {video.artist.name}</span>
+                    <span>Category: {video.category}</span>
+                    <span>Views: {video.views.toLocaleString()}</span>
+                    <span>Uploaded: {new Date(video.uploadDate).toLocaleDateString()}</span>
+                    {video.featured && <span className="status featured">Featured</span>}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

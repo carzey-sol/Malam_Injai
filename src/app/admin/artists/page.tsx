@@ -26,11 +26,13 @@ export default function AdminArtistsPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const [artists, setArtists] = useState<Artist[]>([]);
+  const [filteredArtists, setFilteredArtists] = useState<Artist[]>([]);
   const [loadingArtists, setLoadingArtists] = useState(true);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [editingArtist, setEditingArtist] = useState<Artist | null>(null);
   const [categoryStats, setCategoryStats] = useState<{ [key: string]: number }>({});
+  const [searchTerm, setSearchTerm] = useState('');
   const [formData, setFormData] = useState({
     name: '',
     bio: '',
@@ -53,6 +55,10 @@ export default function AdminArtistsPage() {
     loadArtists();
   }, []);
 
+  useEffect(() => {
+    filterArtists();
+  }, [artists, searchTerm]);
+
   const loadArtists = async () => {
     try {
       setLoadingArtists(true);
@@ -72,6 +78,20 @@ export default function AdminArtistsPage() {
     } finally { 
       setLoadingArtists(false); 
     }
+  };
+
+  const filterArtists = () => {
+    if (!searchTerm) {
+      setFilteredArtists(artists);
+      return;
+    }
+
+    const filtered = artists.filter(artist =>
+      artist.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      artist.bio.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      artist.category.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredArtists(filtered);
   };
 
   const handleDelete = async (artistId: string) => {
@@ -282,50 +302,63 @@ export default function AdminArtistsPage() {
 
       {/* Artists List */}
       <div className="admin-form">
-        <h2>All Artists</h2>
+        <div className="admin-list-header">
+          <h2>All Artists</h2>
+          <div className="search-container">
+            <input
+              type="text"
+              placeholder="Search artists..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+            />
+          </div>
+        </div>
         {loadingArtists ? (
           <div className="loading">Loading artists...</div>
-        ) : artists.length === 0 ? (
+        ) : filteredArtists.length === 0 ? (
           <div className="no-results">No artists found</div>
         ) : (
-          <div className="admin-grid">
-            {artists.map((artist) => (
-              <div key={artist.id} className="admin-card">
-                <div className="admin-card-actions">
-                  <button 
-                    className="btn-edit"
-                    onClick={() => handleEdit(artist)}
-                    title="Edit Artist"
-                  >
-                    Edit
-                  </button>
-                  <button 
-                    className="btn-delete"
-                    onClick={() => handleDelete(artist.id)}
-                    title="Delete Artist"
-                  >
-                    Delete
-                  </button>
-                </div>
-            <div className="artist-image">
+          <div className="admin-list">
+            {filteredArtists.map((artist) => (
+              <div key={artist.id} className="admin-list-item">
+                <div className="admin-list-image">
                   <img src={artist.image} alt={artist.name} />
-            </div>
-            <div className="artist-info">
-                  <h3>{artist.name}</h3>
+                </div>
+                <div className="admin-list-content">
+                  <div className="admin-list-header-content">
+                    <h3>{artist.name}</h3>
+                    <div className="admin-list-actions">
+                      <button 
+                        className="btn btn-small btn-edit"
+                        onClick={() => handleEdit(artist)}
+                        title="Edit Artist"
+                      >
+                        Edit
+                      </button>
+                      <button 
+                        className="btn btn-small btn-delete"
+                        onClick={() => handleDelete(artist.id)}
+                        title="Delete Artist"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
                   <div 
-                    className="artist-bio artist-bio-truncated"
+                    className="admin-list-excerpt artist-bio artist-bio-truncated"
                     dangerouslySetInnerHTML={{ __html: artist.bio }}
                   />
-                  <div style={{ marginTop: '1rem', fontSize: '14px', color: '#666' }}>
-                    <p>Category: {artist.category}</p>
-                    <p>Years Active: {artist.stats.yearsActive}</p>
-                    <p>Tracks: {artist.stats.tracksReleased}</p>
-                    <p>Streams: {artist.stats.streams.toLocaleString()}</p>
-                    {artist.featured && <span className="status">Featured</span>}
+                  <div className="admin-list-meta">
+                    <span>Category: {artist.category}</span>
+                    <span>Years Active: {artist.stats.yearsActive}</span>
+                    <span>Tracks: {artist.stats.tracksReleased}</span>
+                    <span>Streams: {artist.stats.streams.toLocaleString()}</span>
+                    {artist.featured && <span className="status featured">Featured</span>}
                   </div>
-            </div>
-          </div>
-        ))}
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>
