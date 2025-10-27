@@ -151,7 +151,7 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
               alt={article.title}
               width={1200}
               height={600}
-              style={{ objectFit: 'cover' }}
+              style={{ objectFit: 'contain' }}
               priority
             />
           </div>

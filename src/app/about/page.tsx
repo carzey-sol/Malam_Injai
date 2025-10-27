@@ -44,84 +44,33 @@ export default function AboutPage() {
       </section>
 
       {/* Values Section */}
-      <section style={{ padding: '5rem 0', background: 'var(--light-gray)' }}>
+      <section className="values-section">
         <div className="container">
-          <h2 style={{ 
-            textAlign: 'center', 
-            fontSize: '2.5rem', 
-            marginBottom: '3rem',
-            color: 'var(--primary-color)'
-          }}>
-            Our Values
-          </h2>
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', 
-            gap: '2rem' 
-          }}>
-            <div style={{ 
-              background: 'white', 
-              padding: '2rem', 
-              borderRadius: '10px',
-              textAlign: 'center',
-              boxShadow: 'var(--shadow)'
-            }}>
-              <i className="fas fa-heart" style={{ 
-                fontSize: '2.5rem', 
-                color: 'var(--secondary-color)', 
-                marginBottom: '1rem' 
-              }}></i>
+          <h2 className="values-title">Our Values</h2>
+          <div className="values-grid">
+            <div className="value-card">
+              <i className="fas fa-heart value-icon"></i>
               <h3>Authenticity</h3>
               <p>We believe in real stories from real people, preserving the genuine 
               voice of the community.</p>
             </div>
             
-            <div style={{ 
-              background: 'white', 
-              padding: '2rem', 
-              borderRadius: '10px',
-              textAlign: 'center',
-              boxShadow: 'var(--shadow)'
-            }}>
-              <i className="fas fa-users" style={{ 
-                fontSize: '2.5rem', 
-                color: 'var(--secondary-color)', 
-                marginBottom: '1rem' 
-              }}></i>
+            <div className="value-card">
+              <i className="fas fa-users value-icon"></i>
               <h3>Community</h3>
               <p>Building connections between artists, fans, and culture enthusiasts 
               to strengthen the Guigui rap scene.</p>
             </div>
             
-            <div style={{ 
-              background: 'white', 
-              padding: '2rem', 
-              borderRadius: '10px',
-              textAlign: 'center',
-              boxShadow: 'var(--shadow)'
-            }}>
-              <i className="fas fa-star" style={{ 
-                fontSize: '2.5rem', 
-                color: 'var(--secondary-color)', 
-                marginBottom: '1rem' 
-              }}></i>
+            <div className="value-card">
+              <i className="fas fa-star value-icon"></i>
               <h3>Excellence</h3>
               <p>Promoting high-quality content and supporting artists in their 
               pursuit of musical excellence.</p>
             </div>
             
-            <div style={{ 
-              background: 'white', 
-              padding: '2rem', 
-              borderRadius: '10px',
-              textAlign: 'center',
-              boxShadow: 'var(--shadow)'
-            }}>
-              <i className="fas fa-globe" style={{ 
-                fontSize: '2.5rem', 
-                color: 'var(--secondary-color)', 
-                marginBottom: '1rem' 
-              }}></i>
+            <div className="value-card">
+              <i className="fas fa-globe value-icon"></i>
               <h3>Innovation</h3>
               <p>Embracing new technologies and creative approaches to showcase 
               Guigui rap culture globally.</p>
@@ -131,45 +80,24 @@ export default function AboutPage() {
       </section>
 
       {/* Stats Section */}
-      <section style={{ padding: '5rem 0' }}>
+      <section className="stats-section">
         <div className="container">
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
-            gap: '2rem',
-            textAlign: 'center'
-          }}>
-            <div>
-              <h3 style={{ 
-                fontSize: '3rem', 
-                color: 'var(--secondary-color)', 
-                marginBottom: '0.5rem' 
-              }}>50+</h3>
-              <p style={{ fontSize: '1.1rem', color: 'var(--dark-gray)' }}>Artists Featured</p>
+          <div className="stats-grid">
+            <div className="stat-item">
+              <h3 className="stat-number">50+</h3>
+              <p className="stat-label">Artists Featured</p>
             </div>
-            <div>
-              <h3 style={{ 
-                fontSize: '3rem', 
-                color: 'var(--secondary-color)', 
-                marginBottom: '0.5rem' 
-              }}>500+</h3>
-              <p style={{ fontSize: '1.1rem', color: 'var(--dark-gray)' }}>Videos Published</p>
+            <div className="stat-item">
+              <h3 className="stat-number">500+</h3>
+              <p className="stat-label">Videos Published</p>
             </div>
-            <div>
-              <h3 style={{ 
-                fontSize: '3rem', 
-                color: 'var(--secondary-color)', 
-                marginBottom: '0.5rem' 
-              }}>100+</h3>
-              <p style={{ fontSize: '1.1rem', color: 'var(--dark-gray)' }}>Events Organized</p>
+            <div className="stat-item">
+              <h3 className="stat-number">100+</h3>
+              <p className="stat-label">Events Organized</p>
             </div>
-            <div>
-              <h3 style={{ 
-                fontSize: '3rem', 
-                color: 'var(--secondary-color)', 
-                marginBottom: '0.5rem' 
-              }}>10K+</h3>
-              <p style={{ fontSize: '1.1rem', color: 'var(--dark-gray)' }}>Community Members</p>
+            <div className="stat-item">
+              <h3 className="stat-number">10K+</h3>
+              <p className="stat-label">Community Members</p>
             </div>
           </div>
         </div>

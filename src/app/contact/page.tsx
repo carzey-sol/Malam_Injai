@@ -61,7 +61,7 @@ export default function ContactPage() {
       <section className="contact-cta">
         <div className="container">
           <div className="cta-content">
-            <h3 className="cta-title p-5">
+            <h3 className="cta-title">
               Ready to Connect?
             </h3>
             <p className="cta-description">

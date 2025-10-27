@@ -158,12 +158,7 @@ export default function EventsPage() {
       {/* Search and Filter Section */}
       <section className="filter-section">
         <div className="container">
-          <div style={{ 
-            display: 'flex', 
-            flexDirection: 'column',
-            gap: '1.5rem',
-            alignItems: 'center'
-          }}>
+          <div className="search-filter-container">
             <SearchBar
               placeholder="Search events..."
               value={searchTerm}

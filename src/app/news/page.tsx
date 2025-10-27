@@ -163,7 +163,7 @@ export default function NewsPage() {
                           alt={featured.title}
                           width={600}
                           height={400}
-                          style={{ objectFit: 'cover' }}
+                          style={{ objectFit: 'contain' }}
                         />
                       </div>
                       <div className="featured-text">
@@ -198,7 +198,7 @@ export default function NewsPage() {
                         alt={article.title}
                         width={400}
                         height={250}
-                        style={{ objectFit: 'cover' }}
+                        style={{ objectFit: 'contain' }}
                       />
                       {article.featured && <span className="featured-badge">Featured</span>}
                     </div>

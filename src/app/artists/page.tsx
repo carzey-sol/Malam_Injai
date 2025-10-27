@@ -118,14 +118,9 @@ export default function ArtistsPage() {
       />
 
       {/* Search and Filter Section */}
-      <section style={{ padding: '2rem 0', background: 'var(--light-gray)' }}>
+      <section className="filter-section">
         <div className="container">
-          <div style={{ 
-            display: 'flex', 
-            flexDirection: 'column',
-            gap: '1.5rem',
-            alignItems: 'center'
-          }}>
+          <div className="search-filter-container">
             <SearchBar
               placeholder="Search artists..."
               value={searchTerm}
@@ -141,7 +136,7 @@ export default function ArtistsPage() {
       </section>
 
       {/* Artists Grid */}
-      <section style={{ padding: '3rem 0' }}>
+      <section className="artists-page">
         <div className="container">
           <div className="artists-grid">
             {filteredArtists.map((artist) => (
@@ -161,18 +156,12 @@ export default function ArtistsPage() {
                     className="artist-bio artist-bio-truncated"
                     dangerouslySetInnerHTML={{ __html: artist.bio }}
                   />
-                  <div style={{ 
-                    display: 'flex', 
-                    gap: '1rem', 
-                    marginTop: '1rem',
-                    fontSize: '0.9rem',
-                    color: 'var(--dark-gray)'
-                  }}>
+                  <div className="artist-stats">
                     <span>{artist.stats.yearsActive}+ years</span>
                     <span>{artist.stats.tracksReleased}+ tracks</span>
                     <span>{artist.stats.streams.toLocaleString()}+ streams</span>
                   </div>
-                  <Link href={`/artists/${artist._id}`} className="btn btn-small" style={{ marginTop: '1rem' }}>
+                  <Link href={`/artists/${artist._id}`} className="btn btn-small artist-details-btn">
                     View Details
                   </Link>
                 </div>
@@ -181,7 +170,7 @@ export default function ArtistsPage() {
           </div>
           
           {filteredArtists.length === 0 && (
-            <div style={{ textAlign: 'center', padding: '3rem 0' }}>
+            <div className="no-results">
               <h3>No artists found in this category</h3>
               <p>Try selecting a different filter or check back later.</p>
             </div>

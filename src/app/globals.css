@@ -5,6 +5,12 @@
     box-sizing: border-box;
 }
 
+/* Prevent horizontal overflow */
+html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+}
+
 :root {
     --primary-color: #000000;
     --secondary-color: #ff0000;
@@ -24,6 +30,8 @@ body {
     line-height: 1.6;
     color: var(--text-color);
     background-color: var(--accent-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .container {
@@ -1478,6 +1486,24 @@ h1, h2, h3, h4, h5, h6 {
     line-height: 1.7;
 }
 
+/* Desktop-specific styles */
+@media (min-width: 1025px) {
+    .news-image {
+        max-width: 350px;
+        max-height: 220px;
+    }
+    
+    .featured-image {
+        max-width: 500px;
+        max-height: 350px;
+    }
+    
+    .article-image {
+        max-width: 700px;
+        max-height: 450px;
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
     .container {
@@ -1616,6 +1642,18 @@ h1, h2, h3, h4, h5, h6 {
 
     .news-grid {
         grid-template-columns: 1fr;
+    }
+
+    .news-image {
+        height: 200px;
+    }
+
+    .featured-image {
+        min-height: 250px;
+    }
+
+    .article-image {
+        min-height: 300px;
     }
 
     .article-title {
@@ -1764,6 +1802,48 @@ h1, h2, h3, h4, h5, h6 {
         justify-content: center;
         text-align: center;
     }
+
+    .news-image {
+        height: 180px;
+    }
+
+    .featured-image {
+        min-height: 200px;
+    }
+
+    .article-image {
+        min-height: 250px;
+    }
+
+    .values-title {
+        font-size: 2rem;
+    }
+
+    .values-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .value-card {
+        padding: 1.5rem;
+    }
+
+    .value-icon {
+        font-size: 2rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+    }
+
+    .stat-label {
+        font-size: 1rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1833,6 +1913,41 @@ h1, h2, h3, h4, h5, h6 {
 
     .contact-form-container {
         padding: 1rem;
+    }
+
+    .values-title {
+        font-size: 1.8rem;
+    }
+
+    .value-card {
+        padding: 1rem;
+    }
+
+    .value-icon {
+        font-size: 1.8rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+    }
+
+    .artist-stats {
+        flex-direction: column;
+        gap: 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .search-filter-container {
+        gap: 1rem;
     }
 }
 
@@ -1941,6 +2056,7 @@ h1, h2, h3, h4, h5, h6 {
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: 2rem;
     margin-bottom: 3rem;
+    justify-items: center;
 }
 
 .news-card {
@@ -1972,16 +2088,21 @@ h1, h2, h3, h4, h5, h6 {
     position: relative;
     width: 100%;
     height: 250px;
+    max-width: 400px;
+    max-height: 250px;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: var(--light-gray);
+    border-radius: 10px 10px 0 0;
+    margin: 0 auto;
 }
 
 .news-image img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     object-position: center;
 }
 
@@ -2079,12 +2200,17 @@ h1, h2, h3, h4, h5, h6 {
     display: flex;
     align-items: center;
     justify-content: center;
+    background: var(--light-gray);
+    min-height: 300px;
+    max-width: 600px;
+    max-height: 400px;
+    margin: 0 auto;
 }
 
 .featured-image img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     object-position: center;
 }
 
@@ -2160,6 +2286,27 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: 10px;
     overflow: hidden;
     box-shadow: var(--shadow);
+}
+
+.article-image {
+    max-width: 800px;
+    max-height: 500px;
+    margin: 0 auto;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    background: var(--light-gray);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+}
+
+.article-image img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    object-position: center;
 }
 
 .article-content-section {
@@ -3711,6 +3858,108 @@ h1, h2, h3, h4, h5, h6 {
     text-overflow: ellipsis;
     max-height: 3.2em; /* Approximately 2 lines with line-height 1.6 */
     line-height: 1.6;
+}
+
+/* About Page Styles */
+.values-section {
+    padding: 5rem 0;
+    background: var(--light-gray);
+}
+
+.values-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: var(--primary-color);
+}
+
+.values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.value-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease;
+}
+
+.value-card:hover {
+    transform: translateY(-5px);
+}
+
+.value-icon {
+    font-size: 2.5rem;
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+}
+
+.value-card h3 {
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+    font-size: 1.3rem;
+}
+
+.value-card p {
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.stats-section {
+    padding: 5rem 0;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    text-align: center;
+}
+
+.stat-item {
+    padding: 1rem;
+}
+
+.stat-number {
+    font-size: 3rem;
+    color: var(--secondary-color);
+    margin-bottom: 0.5rem;
+    font-weight: 900;
+}
+
+.stat-label {
+    font-size: 1.1rem;
+    color: var(--dark-gray);
+    margin: 0;
+}
+
+/* Artists Page Styles */
+.artists-page {
+    padding: 3rem 0;
+}
+
+.search-filter-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.artist-stats {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: var(--dark-gray);
+    flex-wrap: wrap;
+}
+
+.artist-details-btn {
+    margin-top: 1rem;
 }
 
 /* For HTML content in truncated bio */
