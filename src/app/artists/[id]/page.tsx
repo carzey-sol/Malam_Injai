@@ -119,13 +119,12 @@ export default async function ArtistDetailPage({ params }: ArtistDetailPageProps
       <section className="artist-header">
         <div className="container">
           <div className="artist-info">
-            <div className="artist-image">
+            <div className="artist-image artist-image-detail">
               <Image
                 src={artist.image}
                 alt={artist.name}
-                width={400}
-                height={400}
-                style={{ objectFit: 'cover' }}
+                fill
+                style={{ objectFit: 'contain' }}
                 priority
               />
             </div>

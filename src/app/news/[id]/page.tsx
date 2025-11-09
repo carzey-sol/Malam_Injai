@@ -149,8 +149,7 @@ export default async function NewsArticlePage({ params }: NewsArticlePageProps) 
             <Image
               src={article.image}
               alt={article.title}
-              width={1200}
-              height={600}
+              fill
               style={{ objectFit: 'contain' }}
               priority
             />
